@@ -20,10 +20,12 @@ class Game(pygame.sprite.Sprite):
         self.isPlayGameOverSound = False
         self.isPause = False
         self.isStart = True
-        self.pause_button_rect = pygame.Rect(10, 10, 80, 80)
+        self.pause_button_rect = pygame.Rect(10, 10, 56, 56)
         self.pause_button_image = pygame.image.load(const.PAUSE_BUTTON_IMAGE)
-        self.restart_button_rect = pygame.Rect(300, 300, 200, 124)
+        self.restart_button_rect = pygame.Rect(300, 300, 156, 51)
         self.restart_button_image = pygame.image.load(const.RESTART_BUTTON_IMAGE)
+        self.backstart_button_rect = pygame.Rect(290, 345, 58, 59)
+        self.backstart_button_image = pygame.image.load(const.BACKSTART_BUTTON_IMAGE)
 
     def getStart(self):
         return self.isStart
@@ -117,7 +119,7 @@ class Game(pygame.sprite.Sprite):
                                       const.GAME_HEIGHT_SIZE // 2 - pause_text.get_height() // 2 - 30))
         self.screen.blit(pause_hint, (const.GAME_WIDTH_SIZE // 2 - pause_hint.get_width() // 2,
                                       const.GAME_HEIGHT_SIZE // 2 - pause_hint.get_height() // 2))
-        self.drawRestartButton(10, 30)
+        self.drawRestartButton(400, 345)
 
     def drawPauseButton(self):
         self.screen.blit(self.pause_button_image, self.pause_button_rect)
@@ -130,8 +132,13 @@ class Game(pygame.sprite.Sprite):
             if self.pause_button_rect.collidepoint(event.pos):
                 self.isPause = not self.isPause
 
+    def setRestartButton(self, x, y):
+        self.restart_button_rect.x = x
+        self.restart_button_rect.y = y
+
     def drawRestartButton(self, x, y):
-        self.screen.blit(self.restart_button_image, (self.restart_button_rect.x + x, self.restart_button_rect.y + y))
+        self.setRestartButton(x, y)
+        self.screen.blit(self.restart_button_image, self.restart_button_rect)
 
     def restartControl(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -158,9 +165,16 @@ class Game(pygame.sprite.Sprite):
         self.screen.blit(start_cover, (0, 0))
         start_text = pygame.font.SysFont(None, 50).render("Press Space to start", True, (255, 255, 255))
         self.screen.blit(start_text, (const.GAME_WIDTH_SIZE // 2 - start_text.get_width() // 2,
-                                      const.GAME_HEIGHT_SIZE // 2 - start_text.get_height() // 2 + 100))
+                                      const.GAME_HEIGHT_SIZE // 2 - start_text.get_height() // 2 + 130))
         
     def startControl(self, event):
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN and self.isStart == True:
             if event.key == pygame.K_SPACE:
                 self.isStart = False
+        
+    def backStartControl(self, event):
+        self.screen.blit(self.backstart_button_image, self.backstart_button_rect)
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.isStart == False:
+            if self.backstart_button_rect.collidepoint(event.pos):
+                self.isStart = True
+                self.isPause = False

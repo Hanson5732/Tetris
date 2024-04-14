@@ -27,6 +27,7 @@ while True:
             for event in pygame.event.get():
                 game.quitControl(event)
                 game.pauseControl(event)
+                game.backStartControl(event)
                 game.restartControl(event)
 
         else:
@@ -36,7 +37,7 @@ while True:
             DISPLAYSURF.blit(background, (0, 0))
             game.drawMain()
             if game.getGameOver():
-                game.drawRestartButton(10, 30)
+                game.drawRestartButton(330, 400)
             game.drawPauseButton()
 
     pygame.display.update()
