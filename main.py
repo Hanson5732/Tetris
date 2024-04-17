@@ -10,26 +10,22 @@ game = Game(DISPLAYSURF)
 
 while True:
     for event in pygame.event.get():
+        # every control in the event
         game.quitControl(event)
-
-        # pause control
         game.pauseControl(event)
+        game.startControl(event)
+        game.backStartControl(event)
+        game.restartControl(event)
 
     if game.getStart():
+        # draw the cover
         game.drawStartSurface()
-        for event in pygame.event.get():
-            game.startControl(event)
-            game.quitControl(event)
+
     else:
         # pause hint surface
         if game.getPause():
             game.drawPauseSurface()
-            for event in pygame.event.get():
-                game.quitControl(event)
-                game.pauseControl(event)
-                game.backStartControl(event)
-                game.restartControl(event)
-
+                
         else:
             # common logic
             game.update()
@@ -37,7 +33,10 @@ while True:
             DISPLAYSURF.blit(background, (0, 0))
             game.drawMain()
             if game.getGameOver():
+                game.drawGameOverImage()
                 game.drawRestartButton(330, 400)
-            game.drawPauseButton()
+                game.playGameOverSound()
+            else:
+                game.drawPauseButton()
 
     pygame.display.update()
