@@ -79,10 +79,16 @@ class Game(pygame.sprite.Sprite):
             self.dropBlockGroup.update(self.fixedBlockGroup)
         else:
             self.generateDropBlockGroup()
-            self.dropBlockGroup.setDropInterval(900)
+            level = int(self.score / 10)
+            if level <= 10:
+                self.dropBlockGroup.setDropInterval(900-level*20)
+                self.dropBlockGroup.setStandardDropInterval(900-level*20)
+            else:
+                self.dropBlockGroup.setDropInterval(700)
+                self.dropBlockGroup.setStandardDropInterval(700)
+            #print(self.dropBlockGroup.getStandardDropInterval())
 
         if self.isCollision():
-            self.dropBlockGroup.setFallingDown(False)
             blocks = self.dropBlockGroup.getBlocks()
             for block in blocks:
                 self.fixedBlockGroup.addBlocks(block)
@@ -123,8 +129,13 @@ class Game(pygame.sprite.Sprite):
             self.isPlayGameOverSound = True
         
     def drawPauseSurface(self):
+        overlay = pygame.Surface((600, 300))
+        overlay.set_alpha(64)
+        overlay.fill((255, 255, 255))
+        self.screen.blit(overlay, (100, 150))
+
         pause_text = pygame.font.SysFont(None, 40).render("Game Paused", True, (255, 0, 0))
-        pause_hint = pygame.font.SysFont(None, 40).render("Press ESC or the Pause to continue", True, (255, 255, 255))
+        pause_hint = pygame.font.SysFont(None, 40).render("Press ESC or the green triangle to continue", True, (0, 0, 0))
         self.screen.blit(pause_text, (const.GAME_WIDTH_SIZE // 2 - pause_text.get_width() // 2,
                                       const.GAME_HEIGHT_SIZE // 2 - pause_text.get_height() // 2 - 30))
         self.screen.blit(pause_hint, (const.GAME_WIDTH_SIZE // 2 - pause_hint.get_width() // 2,

@@ -29,6 +29,7 @@ class BlockGroup(object):
         self.blocks = []
         self.blockGroupType = blockGroupType
         self.dropTime = getCurrentTime()
+        self.standardDropIntervel = 900
         self.dropInterval = 900
         self.pressTime = {}
         self.eliminate = False
@@ -39,23 +40,22 @@ class BlockGroup(object):
                         config['blockRotate'], config['blockGroupIdx'], width, height, relPos)
             self.blocks.append(block)
         self.isPause = False
-        self.isFallingDown = False
+        
+    def increaseLevel(l):
+        level += l
+
+    def setStandardDropInterval(self, sdi):
+        self.standardDropIntervel = sdi
+
+    # for the game defficulty
+    def getStandardDropInterval(self):
+        return self.standardDropIntervel
 
     def setDropInterval(self, dropInterval):
         self.dropInterval = dropInterval
 
     def getDropInterval(self):
         return self.dropInterval
-
-    def getFallingDown(self):
-        return self.isFallingDown
-    
-    def setFallingDown(self, isFallingDown):
-        self.isFallingDown = isFallingDown
-        if isFallingDown:
-            pygame.key.set_mods(KMOD_MODE)
-        else:
-            pygame.key.set_mods(0)
 
     def setBaseIndexes(self, baseRow, baseCol):
         for block in self.blocks:
@@ -102,21 +102,21 @@ class BlockGroup(object):
 
         # Check whether the right boundary has been crossed
         rightOffsets = [block.colIdx - (const.GAME_COL - 1) for block in self.blocks if block.colIdx >= const.GAME_COL]
-        if rightOffsets:  # 如果列表不为空
+        if rightOffsets:
             maxRightOffset = max(rightOffsets)
             # If cross the right boundary, move all blocks to the left
             for block in self.blocks:
                 block.moveLeft(maxRightOffset)
 
     def isPositionOccupied(self, row, col, fixedBlockGroup):
-        # 检查给定位置是否被静止的方块组占据
+        # Check if the position has been occupied
         for block in fixedBlockGroup.getBlocks():
             if (block.rowIdx, block.colIdx) == (row, col):
                 return True
         return False
 
     def canMove(self, direction, fixedBlockGroup):
-        # 检查是否可以向指定方向移动
+        # Check if the block can move
         for block in self.blocks:
             nextRow, nextCol = block.rowIdx, block.colIdx
             if direction == "left":
@@ -142,8 +142,10 @@ class BlockGroup(object):
         if pressed[K_UP] and self.checkAndSetPressTime(K_UP) and not self.isPause:
             self.rotate()
 
-        if pressed[K_DOWN] and self.checkAndSetPressTime(K_DOWN) and not self.isPause:
-            self.setFallingDown(True)
+        if pressed[K_DOWN] and not self.isPause:
+            self.setDropInterval(30)
+        else: 
+            self.setDropInterval(self.getStandardDropInterval())
 
         if self.blockGroupType == const.BlockGroupType.DROP:
             for block in self.blocks:
@@ -160,8 +162,6 @@ class BlockGroup(object):
                     b.drop(1)
             if fixedBlockGroup is not None:
                 self.keyDownHandler(fixedBlockGroup)
-            if self.getFallingDown():
-                self.setDropInterval(30)
 
         for block in self.blocks:
             block.update()
