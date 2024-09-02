@@ -130,16 +130,22 @@ class Game(pygame.sprite.Sprite):
         
     def drawPauseSurface(self):
         overlay = pygame.Surface((600, 300))
-        overlay.set_alpha(64)
+        overlay.set_alpha(3)
         overlay.fill((255, 255, 255))
         self.screen.blit(overlay, (100, 150))
 
-        pause_text = pygame.font.SysFont(None, 40).render("Game Paused", True, (255, 0, 0))
-        pause_hint = pygame.font.SysFont(None, 40).render("Press ESC or the green triangle to continue", True, (0, 0, 0))
+        pause_text = pygame.font.SysFont(None, 60).render("Game Paused", True, (255, 0, 0))
+        back_hint = pygame.font.SysFont(None, 30).render("Back", True, (0, 0, 0))
+        retry_hint = pygame.font.SysFont(None, 30).render("Retry", True, (0, 0, 0))
+        resume_hint = pygame.font.SysFont(None, 30).render("Resume", True, (0, 0, 0))
         self.screen.blit(pause_text, (const.GAME_WIDTH_SIZE // 2 - pause_text.get_width() // 2,
-                                      const.GAME_HEIGHT_SIZE // 2 - pause_text.get_height() // 2 - 30))
-        self.screen.blit(pause_hint, (const.GAME_WIDTH_SIZE // 2 - pause_hint.get_width() // 2,
-                                      const.GAME_HEIGHT_SIZE // 2 - pause_hint.get_height() // 2))
+                                      const.GAME_HEIGHT_SIZE // 2 - pause_text.get_height() // 2 - 60))
+        self.screen.blit(back_hint, (const.GAME_WIDTH_SIZE // 2 - back_hint.get_width() // 2 - 100,
+                                      const.GAME_HEIGHT_SIZE // 2 - back_hint.get_height() // 2 + 125))
+        self.screen.blit(retry_hint, (const.GAME_WIDTH_SIZE // 2 - retry_hint.get_width() // 2 - 10,
+                                      const.GAME_HEIGHT_SIZE // 2 - retry_hint.get_height() // 2 + 125))
+        self.screen.blit(resume_hint, (const.GAME_WIDTH_SIZE // 2 - resume_hint.get_width() // 2 + 80,
+                                      const.GAME_HEIGHT_SIZE // 2 - resume_hint.get_height() // 2 + 125))
         self.drawRestartButton(360, 345)
         self.drawBackStartButton()
         self.drawStartButton()
